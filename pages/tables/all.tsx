@@ -6,20 +6,20 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { getSearchClient } from "../../clients/algolia";
-import PresenterCard from "../../components/presenters/presenterCard";
-import CreatePresenter from "../../components/presenters/createPresenter";
+import TableCard from "../../components/tables/tableCard";
+import CreateTable from "../../components/tables/createTable";
 
 const searchClient = getSearchClient();
-const presentersIndex = searchClient.initIndex("presenters");
+const tablesIndex = searchClient.initIndex("tables");
 
-const Presenters: NextPage = () => {
+const Tables: NextPage = () => {
   const { user, token } = useAuth();
   const router = useRouter();
 
-  const [presenters, setPresenters] = useState([]);
-  const [presentersStatus, setPresentersStatus] = useState("active");
-  const [presentersTotal, setPresentersTotal] = useState(0);
-  const [presentersHits, setPresentersHits] = useState([]);
+  const [tables, setTables] = useState([]);
+  const [tablesStatus, setTablesStatus] = useState("List View");
+  const [tablesTotal, setTablesTotal] = useState(0);
+  const [tablesHits, setTablesHits] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -28,12 +28,12 @@ const Presenters: NextPage = () => {
   useEffect(() => {
     if (user) {
       setIsLoading(true);
-      getPresenters();
+      getTables();
     }
-  }, [page, user, presentersStatus]);
+  }, [page, user, tablesStatus]);
 
-  const getPresenters = async () => {
-    fetch(`/api/presenters/presenters?status=${presentersStatus}&$skip=${
+  const getTables = async () => {
+    fetch(`/api/tables/tables?status=${tablesStatus}&$skip=${
       page * perPage
     }&$limit=${perPage}&$sort[createdAt]=-1`, {
       headers: new Headers({
@@ -42,8 +42,8 @@ const Presenters: NextPage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setPresenters(data);
-        setPresentersTotal(data.length);
+        setTables(data);
+        setTablesTotal(data.length);
       })
       .catch((e) => {
         console.log(e);
@@ -51,8 +51,8 @@ const Presenters: NextPage = () => {
     setIsLoading(false);
   };
 
-  const handleCreatePresenter = (payload: any) => {
-    fetch(`/api/presenters/presenters`, {
+  const handleCreateTable = (payload: any) => {
+    fetch(`/api/tables/tables`, {
       method: "POST",
       headers: new Headers({
         Authorization: "Bearer " + token,
@@ -62,7 +62,7 @@ const Presenters: NextPage = () => {
     })
       .then((res) => res.json())
       .then((data: any) => {
-        getPresenters();
+        getTables();
         return true;
       })
       .catch((e) => {
@@ -77,11 +77,11 @@ const Presenters: NextPage = () => {
         tabIndex={0}
         className="dropdown-content menu menu-compact p-2 shadow-soft bg-base-100 rounded-xl w-full mt-2"
       >
-        {presentersHits.map((item: any) => {
+        {tablesHits.map((item: any) => {
           return (
             <li key={`hits-${item.name}`}>
               <Link
-                href={`/game-presenters/${item.id}`}
+                href={`/tables/${item.id}`}
                 className="hover:bg-gray-100"
               >
                 {`${item.name} `}
@@ -93,13 +93,13 @@ const Presenters: NextPage = () => {
     );
   };
 
-  const handlePresentersHits = (query: string) => {
+  const handleTablesHits = (query: string) => {
     return new Promise(async (resolve, reject) => {
       try {
-        presentersIndex
+        tablesIndex
           .search(query, { hitsPerPage: 5 })
           .then(({ hits }: any) => {
-            setPresentersHits(hits);
+            setTablesHits(hits);
             resolve(true);
           });
       } catch (e) {
@@ -111,34 +111,34 @@ const Presenters: NextPage = () => {
   return (
     <div className="">
       <Head>
-        <title>Presenters</title>
+        <title>Tables</title>
       </Head>
 
-      {/* All presenters */}
+      {/* All tables */}
       <div className="flex items-end justify-between">
-        <h1 className="text-4xl font-bold mt-5 text-gray-700">Presenters</h1>
+        <h1 className="text-4xl font-bold mt-5 text-gray-700">Tables</h1>
 
         {/* Search Bar */}
         <label
         data-tip="Tip: Search for Clementine or by username / email / phone - `024-648-3804`"
-          htmlFor="presenter-modal"
+          htmlFor="table-modal"
           className="tooltip w-4/12 dropdown border-[1px] border-gray-300 rounded-lg mr-56"
         >
           <input
             tabIndex={0}
             id="algolia-search"
-            placeholder="Search Presenters..."
+            placeholder="Search Tables..."
             className="input input-sm px-5 w-full py-3 bg-transparent border-none"
             onChange={(event) => {
-              handlePresentersHits(event?.target.value);
+              handleTablesHits(event?.target.value);
             }}
           />
           <Hits />
         </label>
 
-        <input type="checkbox" id="presenter-modal" className="modal-toggle" />
+        <input type="checkbox" id="table-modal" className="modal-toggle" />
         <label
-          htmlFor="create-presenter-modal"
+          htmlFor="create-table-modal"
           className="btn btn-xs btn-circle"
         >
           +
@@ -148,16 +148,16 @@ const Presenters: NextPage = () => {
       <div className="flex justify-between mt-5 items-end">
         {/* tabs */}
         <div className="tabs  gap-1 mt-5">
-          {["active", "inactive"].map((item: any) => {
+          {["List View", "Floor View"].map((item: any) => {
             return (
               <a
                 key={`tab-${item}`}
                 className={`tab tab-sm tab-bordered border-b-[1px] gap-2 capitalize ${
-                  presentersStatus == item ? "tab-active" : ""
+                  tablesStatus == item ? "tab-active" : ""
                 }`}
                 onClick={() => {
                   setPage(0);
-                  setPresentersStatus(item);
+                  setTablesStatus(item);
                 }}
               >
                 {item}
@@ -173,22 +173,22 @@ const Presenters: NextPage = () => {
         </div>
         <span>
           <div className="text-gray-500 text-xs">
-            ( Total: {presenters.length} )
+            ( Total: {tables.length} )
           </div>
         </span>
       </div>
 
-      {/* presenters List */}
+      {/* tables List */}
       <div className="mt-7 text-gray-500 ">
         {!isLoading && (
           <div className="min-h-[70vh] flex flex-col justify-between">
-            {presenters.length == 0 && <div>No presenters yet</div>}
+            {tables.length == 0 && <div>No tables yet</div>}
 
             <div className="grid grid-cols-4 flex-wrap gap-4 gap-y-4">
-              {presenters.map((item, index) => {
+              {tables.map((item, index) => {
                 return (
-                  <div key={`presenter-${index}`}>
-                    <PresenterCard presenter={item} />
+                  <div key={`table-${index}`}>
+                    <TableCard table={item} />
                   </div>
                 );
               })}
@@ -208,7 +208,7 @@ const Presenters: NextPage = () => {
                   Page {page + 1}
                 </div>
                 <button
-                  disabled={!(presentersTotal / 10 > 1)}
+                  disabled={!(tablesTotal / 10 > 1)}
                   className="btn btn-sm btn-ghost text-white font-light"
                   onClick={() => {
                     setPage(page + 1);
@@ -223,10 +223,10 @@ const Presenters: NextPage = () => {
         {isLoading && <progress className="progress h-[3px] w-56"></progress>}
       </div>
 
-      {/* Create Presenter Modal */}
-      <CreatePresenter handleCreatePresenter={handleCreatePresenter} />
+      {/* Create Table Modal */}
+      <CreateTable handleCreateTable={handleCreateTable} />
     </div>
   );
 };
 
-export default Presenters;
+export default Tables;

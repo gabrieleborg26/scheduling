@@ -6,3 +6,11 @@ export interface PresenterType {
     phone: string;
     createdAt: number
   }
+
+  export interface TableType {
+    id: number;
+    name: string;
+    game: string;
+    area: string;
+    createdAt: number
+  }

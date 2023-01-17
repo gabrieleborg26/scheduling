@@ -8,6 +8,7 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<PresenterType[]>
 ) {
+
   if (req.method === "GET") {
     let data = presenters
     if(req.query.status){

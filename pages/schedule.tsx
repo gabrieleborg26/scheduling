@@ -22,8 +22,9 @@ const Schedule: NextPage = () => {
   useEffect(() => {
     if (user) {
       setIsLoading(true);
-      getPresenters();
       getTables();
+
+      getPresenters();
     }
   }, [user]);
 
@@ -36,11 +37,11 @@ const Schedule: NextPage = () => {
       .then((res) => res.json())
       .then((data) => {
         setPresenters(data);
+        setIsLoading(false);
       })
       .catch((e) => {
         console.log(e);
       });
-    setIsLoading(false);
   };
 
   const getTables = async () => {
@@ -127,7 +128,9 @@ const Schedule: NextPage = () => {
       if (selectedPresenters.length - 1 > selectedTables.length) {
         newSelectedPresenters.splice(index, 1);
       } else {
-        toast.error("Error: Removing presenter would cause shortage for the number of tables selected.");
+        toast.error(
+          "Error: Removing presenter would cause shortage for the number of tables selected."
+        );
       }
     } else {
       newSelectedPresenters.push(presenter);
@@ -139,6 +142,8 @@ const Schedule: NextPage = () => {
       <div className="mt-10 shadow-soft bg-white p-5 rounded-xl flex flex-col gap-5">
         <div>
           <p className="text-sm font-bold mb-2">Presenters</p>
+        {isLoading && <progress className="progress h-[3px] w-56"></progress>}
+
           <div className="flex flex-wrap gap-x-3 gap-y-2">
             {presenters.map((presenter: TableType, index: number) => {
               return (
@@ -159,6 +164,8 @@ const Schedule: NextPage = () => {
         </div>
         <div>
           <p className="text-sm font-bold mb-2">Tables</p>
+        {isLoading && <progress className="progress h-[3px] w-56"></progress>}
+
           <div className="flex flex-wrap gap-3">
             {tables.map((table: TableType, index: number) => {
               return (

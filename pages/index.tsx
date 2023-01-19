@@ -10,7 +10,7 @@ const Home: NextPage = () => {
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
         <title>Scheduling</title>
-        <link rel="icon" href="/favico.ico" />
+        <link rel="icon" href="/image/favicon.ico" />
       </Head>
 
       <p className="font-bold text-md">Loading...</p>

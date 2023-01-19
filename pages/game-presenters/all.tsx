@@ -28,18 +28,24 @@ const Presenters: NextPage = () => {
   useEffect(() => {
     if (user) {
       setIsLoading(true);
-      getPresenters();
+      //showing loading
+      setTimeout(() => {
+        getPresenters();
+      }, 1000);
     }
   }, [page, user, presentersStatus]);
 
   const getPresenters = async () => {
-    fetch(`/api/presenters/presenters?status=${presentersStatus}&$skip=${
-      page * perPage
-    }&$limit=${perPage}&$sort[createdAt]=-1`, {
-      headers: new Headers({
-        Authorization: "Bearer " + token,
-      }),
-    })
+    fetch(
+      `/api/presenters/presenters?status=${presentersStatus}&$skip=${
+        page * perPage
+      }&$limit=${perPage}&$sort[createdAt]=-1`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + token,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         setPresenters(data);
@@ -69,7 +75,6 @@ const Presenters: NextPage = () => {
         console.log(`Error: ${e.message}`);
       });
   };
-  
 
   const Hits = () => {
     return (
@@ -120,7 +125,7 @@ const Presenters: NextPage = () => {
 
         {/* Search Bar */}
         <label
-        data-tip="Tip: Search for Clementine or by username / email / phone - `024-648-3804`"
+          data-tip="Tip: Search for Clementine or by username / email / phone - `024-648-3804`"
           htmlFor="presenter-modal"
           className="tooltip w-4/12 dropdown border-[1px] border-gray-300 rounded-lg mr-56"
         >
@@ -209,10 +214,11 @@ const Presenters: NextPage = () => {
                 </div>
                 <button
                   disabled={!(presentersTotal / 10 > 1)}
-                  className="btn btn-sm btn-ghost text-white font-light"
+                  className="lowercase tooltip btn btn-sm btn-ghost text-white font-light"
                   onClick={() => {
                     setPage(page + 1);
                   }}
+                  data-tip="pagination not working due to no backend, but coded in place"
                 >
                   →
                 </button>

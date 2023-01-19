@@ -8,6 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 import { getSearchClient } from "../../clients/algolia";
 import TableCard from "../../components/tables/tableCard";
 import CreateTable from "../../components/tables/createTable";
+import TableLayout from "../../components/tables/tableLayout";
 
 const searchClient = getSearchClient();
 const tablesIndex = searchClient.initIndex("tables");
@@ -28,18 +29,23 @@ const Tables: NextPage = () => {
   useEffect(() => {
     if (user) {
       setIsLoading(true);
-      getTables();
+      setTimeout(() => {
+        getTables();
+      }, 1000);
     }
   }, [page, user, tablesStatus]);
 
   const getTables = async () => {
-    fetch(`/api/tables/tables?status=${tablesStatus}&$skip=${
-      page * perPage
-    }&$limit=${perPage}&$sort[createdAt]=-1`, {
-      headers: new Headers({
-        Authorization: "Bearer " + token,
-      }),
-    })
+    fetch(
+      `/api/tables/tables?status=${tablesStatus}&$skip=${
+        page * perPage
+      }&$limit=${perPage}&$sort[createdAt]=-1`,
+      {
+        headers: new Headers({
+          Authorization: "Bearer " + token,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         setTables(data);
@@ -69,7 +75,6 @@ const Tables: NextPage = () => {
         console.log(`Error: ${e.message}`);
       });
   };
-  
 
   const Hits = () => {
     return (
@@ -80,10 +85,7 @@ const Tables: NextPage = () => {
         {tablesHits.map((item: any) => {
           return (
             <li key={`hits-${item.name}`}>
-              <Link
-                href={`/tables/${item.id}`}
-                className="hover:bg-gray-100"
-              >
+              <Link href={`/tables/${item.id}`} className="hover:bg-gray-100">
                 {`${item.name} `}
               </Link>
             </li>
@@ -96,12 +98,10 @@ const Tables: NextPage = () => {
   const handleTablesHits = (query: string) => {
     return new Promise(async (resolve, reject) => {
       try {
-        tablesIndex
-          .search(query, { hitsPerPage: 5 })
-          .then(({ hits }: any) => {
-            setTablesHits(hits);
-            resolve(true);
-          });
+        tablesIndex.search(query, { hitsPerPage: 5 }).then(({ hits }: any) => {
+          setTablesHits(hits);
+          resolve(true);
+        });
       } catch (e) {
         reject([]);
       }
@@ -120,7 +120,7 @@ const Tables: NextPage = () => {
 
         {/* Search Bar */}
         <label
-        data-tip="Tip: Search for Clementine or by username / email / phone - `024-648-3804`"
+          data-tip="Tip: Search for Clementine or by username / email / phone - `024-648-3804`"
           htmlFor="table-modal"
           className="tooltip w-4/12 dropdown border-[1px] border-gray-300 rounded-lg mr-56"
         >
@@ -137,10 +137,7 @@ const Tables: NextPage = () => {
         </label>
 
         <input type="checkbox" id="table-modal" className="modal-toggle" />
-        <label
-          htmlFor="create-table-modal"
-          className="btn btn-xs btn-circle"
-        >
+        <label htmlFor="create-table-modal" className="btn btn-xs btn-circle">
           +
         </label>
       </div>
@@ -157,6 +154,8 @@ const Tables: NextPage = () => {
                 }`}
                 onClick={() => {
                   setPage(0);
+                  setIsLoading(true);
+
                   setTablesStatus(item);
                 }}
               >
@@ -188,7 +187,11 @@ const Tables: NextPage = () => {
               {tables.map((item, index) => {
                 return (
                   <div key={`table-${index}`}>
-                    <TableCard table={item} />
+                    {tablesStatus == "List View" && <TableCard table={item} />}
+
+                    {tablesStatus == "Floor View" && (
+                      <TableLayout table={item} />
+                    )}
                   </div>
                 );
               })}
@@ -209,10 +212,11 @@ const Tables: NextPage = () => {
                 </div>
                 <button
                   disabled={!(tablesTotal / 10 > 1)}
-                  className="btn btn-sm btn-ghost text-white font-light"
+                  className="lowercase tooltip btn btn-sm btn-ghost text-white font-light"
                   onClick={() => {
                     setPage(page + 1);
                   }}
+                  data-tip="pagination not working due to no backend, but coded in place"
                 >
                   →
                 </button>

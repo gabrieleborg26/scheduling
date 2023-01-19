@@ -121,8 +121,14 @@ const Schedule: NextPage = () => {
   const handleSeletedPresenters = (presenter: string) => {
     let newSelectedPresenters = [...selectedPresenters];
     let index = newSelectedPresenters.indexOf(presenter);
+    console.log(selectedPresenters.length , selectedTables.length)
+
     if (index >= 0) {
-      newSelectedPresenters.splice(index, 1);
+      if (selectedPresenters.length - 1 > selectedTables.length) {
+        newSelectedPresenters.splice(index, 1);
+      } else {
+        toast.error("Error: Removing presenter would cause shortage for the number of tables selected.");
+      }
     } else {
       newSelectedPresenters.push(presenter);
     }
@@ -185,14 +191,14 @@ const Schedule: NextPage = () => {
         </div>
       </div>
       {/* table */}
-      <div className="mt-20 w-fit bg-white shadow-soft p-5 rounded-2xl">
+      <div className="mt-20 w-fit bg-white shadow-soft py-5 px-2 rounded-2xl">
         <table className="">
           <thead>
             <tr>
               <th className=""></th>
               {time.map((item: string, index: number) => {
                 return (
-                  <th key={`header-${index}`} className="px-5 text-sm ">
+                  <th key={`header-${index}`} className="px-5 text-xs ">
                     {item}
                   </th>
                 );
@@ -203,14 +209,14 @@ const Schedule: NextPage = () => {
             {schedule.map((user: any, index: number) => {
               return (
                 <tr key={`row-${index}`} className=" border-t-[1px] py-1">
-                  <td className="px-5 font-medium">
+                  <td className="text-sm px-5 font-medium">
                     {selectedPresenters[index]}
                   </td>
                   {user.map((table: any, index: number) => {
                     return (
                       <td
                         key={`cell-${index}`}
-                        className={`font-light px-5 ${
+                        className={`text-sm font-light px-5 ${
                           table == "break" ? "text-orange-400" : ""
                         }`}
                       >

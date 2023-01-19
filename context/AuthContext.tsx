@@ -6,6 +6,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "../config/firebase";
+import { useRouter } from "next/router";
 
 const AuthContext = createContext<any>({});
 
@@ -19,7 +20,7 @@ export const AuthContextProvider = ({
   const [user, setUser] = useState<any>(null);
   const [token, setToken] = useState<any>(null);
   const [refreshToken, setRefreshToken] = useState(null);
-
+  let router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export const AuthContextProvider = ({
         setToken(user.accessToken);
       } else {
         setUser(null);
+        router.push("/login");
       }
       setLoading(false);
     });

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Navbar from "../components/Navbar";
+import Navbar from "./navbar/Navbar";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
@@ -11,11 +11,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      // router.push("/login");
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
+    if (!loading && !user) {
+      router.push("/login");
+    } 
+    if("code" in user) {
+      router.push("/login");
+      
     }
   }, [router, user]);
 

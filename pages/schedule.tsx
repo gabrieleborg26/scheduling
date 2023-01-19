@@ -139,6 +139,10 @@ const Schedule: NextPage = () => {
   };
   return (
     <div>
+       <Head>
+        <title>Scheduling</title>
+        <link rel="icon" href="/image/favicon.ico" />
+      </Head>
       <div className="mt-10 shadow-soft bg-white p-5 rounded-xl flex flex-col gap-5">
         <div>
           <p className="text-sm font-bold mb-2">Presenters</p>

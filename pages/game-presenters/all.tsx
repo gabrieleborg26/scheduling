@@ -50,11 +50,11 @@ const Presenters: NextPage = () => {
       .then((data) => {
         setPresenters(data);
         setPresentersTotal(data.length);
+        setIsLoading(false);
       })
       .catch((e) => {
         console.log(e);
       });
-    setIsLoading(false);
   };
 
   const handleCreatePresenter = (payload: any) => {

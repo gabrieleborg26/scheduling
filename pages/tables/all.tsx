@@ -50,11 +50,11 @@ const Tables: NextPage = () => {
       .then((data) => {
         setTables(data);
         setTablesTotal(data.length);
+        setIsLoading(false);
       })
       .catch((e) => {
         console.log(e);
       });
-    setIsLoading(false);
   };
 
   const handleCreateTable = (payload: any) => {

@@ -115,13 +115,13 @@ const Schedule: NextPage = () => {
         newSelectedTables.push(table);
       }
     }
+
     setSelectedTables(newSelectedTables);
   };
 
   const handleSeletedPresenters = (presenter: string) => {
     let newSelectedPresenters = [...selectedPresenters];
     let index = newSelectedPresenters.indexOf(presenter);
-    console.log(selectedPresenters.length , selectedTables.length)
 
     if (index >= 0) {
       if (selectedPresenters.length - 1 > selectedTables.length) {
@@ -176,7 +176,7 @@ const Schedule: NextPage = () => {
                       ? "opacity-25"
                       : ""
                   }
-                  hover:bg-amber-500/10 transition-all duration-300 bg-gray-100/60  cursor-pointer  px-3 py-1 rounded-lg text-xs`}
+                  hover:bg-amber-500/10 transition-all duration-300 cursor-pointer  px-3 py-1 rounded-lg text-xs`}
                 >
                   {table.name}
                 </div>

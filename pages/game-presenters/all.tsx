@@ -162,6 +162,8 @@ const Presenters: NextPage = () => {
                 }`}
                 onClick={() => {
                   setPage(0);
+                  setIsLoading(true);
+
                   setPresentersStatus(item);
                 }}
               >

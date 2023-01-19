@@ -18,7 +18,7 @@ const Login: NextPage = () => {
         try {
             await login(email, password)
                 .then(() => {
-                    router.push("/dashboard");
+                    router.push("/game-presenters/all");
                 })
                 .catch((e: any) => {
                     console.log("LOGIN IN ERROR", e);
